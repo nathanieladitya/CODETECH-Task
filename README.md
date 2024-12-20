@@ -1,4 +1,3 @@
-# CODETECH-Task1
 Name: Aditya Nathaniel Kujur
 Company: CODTECH IT SOLUTIONS
 ID: CT08DS210
@@ -8,70 +7,91 @@ Mentor: Neela Santhosh Kumar
 
 Overview of the Project
 
-Project Overview: Inventory Management System
-The Inventory Management System is a Python-based program designed to manage the inventory of a store or warehouse. It provides functionalities such as product management, inventory tracking, reporting, and user authentication. The system aims to streamline inventory processes, minimize errors, and improve usability with a graphical user interface (GUI).
+**TASK 1: INVENTORY MANAGEMENT SYSTEM**
 
-Features
-1. User Authentication
-Secure login system with usernames and passwords.
-Role-based access control:
-Admin: Full access to all features.
-Staff: Limited access (e.g., view inventory, update stock).
-2. Product Management
-Add Product:
-Input product details such as name, ID, category, price, and quantity.
-Validate data for completeness and correctness.
-Edit Product:
-Update product information, such as quantity or price.
-Delete Product:
-Remove products from the inventory.
-3. Inventory Tracking
-Real-time inventory updates for incoming and outgoing stock.
-Low-stock alerts:
-Notify users when stock levels fall below a predefined threshold.
-Inventory search:
-Filter products by name, category, or ID.
-4. Reporting
-Low-Stock Report:
-List of products with quantities below the threshold.
-Sales Summary:
-Summarize sales by day, week, or month.
-Calculate total revenue and top-selling products.
-5. Data Validation
-Ensure user inputs are valid:
-Mandatory fields for product details.
-Price and quantity must be non-negative numbers.
-Prevent duplication of product IDs.
-6. Graphical User Interface (GUI)
-User-friendly interface built with a Python GUI library such as Tkinter, PyQt, or Kivy.
-Functionalities include:
-Navigation menu for different features.
-Forms for adding/editing products.
-Dashboard displaying inventory statistics and alerts.
-Technology Stack
-Programming Language: Python
-GUI Framework: Tkinter / PyQt / Kivy
-Database: SQLite (for local storage) or MySQL (for scalable use cases)
-Additional Libraries:
-pandas for data manipulation.
-matplotlib for data visualization in reports.
-bcrypt or similar for secure password hashing.
-System Workflow
-Authentication:
+**Overview:**
+This project involves developing a Python-based inventory management system for a store or warehouse. The system will provide functionalities to manage products, track inventory levels, and generate insightful reports. Additionally, features like user authentication, data validation, and a user-friendly graphical user interface (GUI) will ensure accessibility and security.
 
-User logs into the system.
-Access granted based on user role.
-Product Management:
+**Features:**
 
-Admin/staff adds or updates product details.
-System validates and stores data.
-Inventory Tracking:
+1. **User Authentication:**
+   - Implement secure login functionality.
+   - Differentiate between user roles (e.g., Admin, Staff).
 
-Automatically update stock levels on sales or new stock arrival.
-Generate low-stock alerts when necessary.
-Reporting:
+2. **Product Management:**
+   - Add, edit, or delete product information.
+   - Store product details like name, SKU, category, price, and quantity.
 
-Admin generates reports for decision-making.
-User Interaction:
+3. **Inventory Tracking:**
+   - View current inventory levels.
+   - Update inventory after sales or restocking.
 
-All interactions are handled via the GUI for better usability.
+4. **Reports and Alerts:**
+   - Generate low-stock alerts based on pre-defined thresholds.
+   - Produce sales summaries (daily, weekly, monthly).
+
+5. **Data Validation:**
+   - Ensure all inputs are correctly formatted and within valid ranges.
+
+6. **Graphical User Interface (GUI):**
+   - Use a library like Tkinter or PyQt for a user-friendly interface.
+   - Allow intuitive navigation through tabs or menus.
+
+**Development Tools:**
+- Language: Python
+- Libraries: SQLite (for database), Tkinter or PyQt (for GUI), Pandas (for reports)
+
+**Implementation Steps:**
+1. Define the database schema for storing product details and transactions.
+2. Develop authentication and user role management.
+3. Create CRUD (Create, Read, Update, Delete) functionality for product management.
+4. Implement inventory level tracking logic.
+5. Design and implement the GUI.
+6. Test the system for usability and bugs.
+
+---
+
+**TASK 2: LIBRARY MANAGEMENT SYSTEM**
+
+**Overview:**
+This project focuses on building a Python-based library management system to handle various library resources, such as books, magazines, and DVDs. It will facilitate adding new items, checking out and returning items, managing fines, and performing searches based on different criteria.
+
+**Features:**
+
+1. **Item Management:**
+   - Add, edit, or delete library items.
+   - Store details such as title, author, category, publication date, and availability status.
+
+2. **Check-out and Return:**
+   - Check-out items to registered users.
+   - Track due dates and return statuses.
+
+3. **Overdue Fines Management:**
+   - Calculate overdue fines based on return delays.
+   - Allow users to pay fines through the system.
+
+4. **Search and Filter:**
+   - Search for items by title, author, category, or keyword.
+   - Filter results based on availability or type (book, magazine, DVD).
+
+5. **User Authentication and Management:**
+   - Secure login for users and administrators.
+   - Maintain a database of registered library members.
+
+6. **Graphical User Interface (GUI):**
+   - Use Tkinter or PyQt to create an interactive interface.
+   - Enable ease of use with intuitive buttons and forms.
+
+**Development Tools:**
+- Language: Python
+- Libraries: SQLite (for database), Tkinter or PyQt (for GUI), datetime (for due dates and fines)
+
+**Implementation Steps:**
+1. Define the database schema for library items, user data, and transactions.
+2. Build authentication functionality and user role management.
+3. Implement CRUD operations for managing library items.
+4. Create modules for check-out, return, and fine calculation.
+5. Design and implement the GUI.
+6. Test the system to ensure functionality and usability.
+
+
