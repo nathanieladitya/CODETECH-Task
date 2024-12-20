@@ -1,0 +1,71 @@
+Name: Aditya Nathaniel Kujur 
+Company: CODTECH IT SOLUTIONS
+ID: CT08DS210
+Domain: PYTHON PROGRAMMING 
+Duration: NOVEMBER 30th, 2024 to DECEMBER 30th, 2024. 
+Mentor: Neela Santhosh Kumar
+
+Overview of the Project
+
+TASK 2: LIBRARY MANAGEMENT SYSTEM
+
+Overview:
+This project focuses on building a Python-based library management system to handle various library resources, such as books, magazines, and DVDs. It will facilitate adding new items, checking out and returning items, managing fines, and performing searches based on different criteria.
+
+Features:
+
+Item Management:
+
+Add, edit, or delete library items.
+
+Store details such as title, author, category, publication date, and availability status.
+
+Check-out and Return:
+
+Check-out items to registered users.
+
+Track due dates and return statuses.
+
+Overdue Fines Management:
+
+Calculate overdue fines based on return delays.
+
+Allow users to pay fines through the system.
+
+Search and Filter:
+
+Search for items by title, author, category, or keyword.
+
+Filter results based on availability or type (book, magazine, DVD).
+
+User Authentication and Management:
+
+Secure login for users and administrators.
+
+Maintain a database of registered library members.
+
+Graphical User Interface (GUI):
+
+Use Tkinter or PyQt to create an interactive interface.
+
+Enable ease of use with intuitive buttons and forms.
+
+Development Tools:
+
+Language: Python
+
+Libraries: SQLite (for database), Tkinter or PyQt (for GUI), datetime (for due dates and fines)
+
+Implementation Steps:
+
+Define the database schema for library items, user data, and transactions.
+
+Build authentication functionality and user role management.
+
+Implement CRUD operations for managing library items.
+
+Create modules for check-out, return, and fine calculation.
+
+Design and implement the GUI.
+
+Test the system to ensure functionality and usability.
