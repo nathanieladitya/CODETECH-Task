@@ -49,6 +49,7 @@ This project involves developing a Python-based inventory management system for 
 5. Design and implement the GUI.
 6. Test the system for usability and bugs.
 
----
+![Screenshot (116)](https://github.com/user-attachments/assets/2066fcdc-9b4e-4661-a459-a6a7625b0c33)
+
 
 
