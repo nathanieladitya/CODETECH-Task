@@ -1,0 +1,214 @@
+import tkinter as tk
+from tkinter import messagebox, ttk
+import json
+import os
+from datetime import datetime, timedelta
+
+# Constants
+DATA_FILE = "library_data.json"
+FINE_PER_DAY = 0.5
+
+# Helper functions
+def load_data():
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "r") as file:
+            return json.load(file)
+    return {}
+
+def save_data(data):
+    with open(DATA_FILE, "w") as file:
+        json.dump(data, file, indent=4)
+
+# GUI Application class
+class LibraryApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Library Management System")
+
+        self.data = load_data()
+
+        self.show_main_menu()
+
+    def show_main_menu(self):
+        self.clear_frame()
+
+        tk.Button(self.root, text="Add Item", command=self.add_item).grid(row=0, column=0, padx=10, pady=10)
+        tk.Button(self.root, text="Check Out Item", command=self.checkout_item).grid(row=0, column=1, padx=10, pady=10)
+        tk.Button(self.root, text="Return Item", command=self.return_item).grid(row=0, column=2, padx=10, pady=10)
+        tk.Button(self.root, text="Search Items", command=self.search_items).grid(row=1, column=0, padx=10, pady=10)
+        tk.Button(self.root, text="Overdue Items", command=self.overdue_items).grid(row=1, column=1, padx=10, pady=10)
+
+        self.refresh_library_table()
+
+    def clear_frame(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
+    def refresh_library_table(self):
+        if hasattr(self, 'library_table'):
+            self.library_table.destroy()
+
+        self.library_table = ttk.Treeview(self.root, columns=("ID", "Title", "Author", "Category", "Status"), show="headings")
+        self.library_table.heading("ID", text="ID")
+        self.library_table.heading("Title", text="Title")
+        self.library_table.heading("Author", text="Author")
+        self.library_table.heading("Category", text="Category")
+        self.library_table.heading("Status", text="Status")
+        self.library_table.grid(row=2, column=0, columnspan=3, pady=10, sticky="nsew")
+
+        for item_id, details in self.data.items():
+            status = "Available" if not details.get("borrower") else f"Checked out by {details['borrower']}"
+            self.library_table.insert("", "end", values=(item_id, details["title"], details["author"], details["category"], status))
+
+    def add_item(self):
+        self.clear_frame()
+
+        tk.Label(self.root, text="Item ID:").grid(row=0, column=0, padx=10, pady=10)
+        self.id_entry = tk.Entry(self.root)
+        self.id_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        tk.Label(self.root, text="Title:").grid(row=1, column=0, padx=10, pady=10)
+        self.title_entry = tk.Entry(self.root)
+        self.title_entry.grid(row=1, column=1, padx=10, pady=10)
+
+        tk.Label(self.root, text="Author:").grid(row=2, column=0, padx=10, pady=10)
+        self.author_entry = tk.Entry(self.root)
+        self.author_entry.grid(row=2, column=1, padx=10, pady=10)
+
+        tk.Label(self.root, text="Category:").grid(row=3, column=0, padx=10, pady=10)
+        self.category_entry = tk.Entry(self.root)
+        self.category_entry.grid(row=3, column=1, padx=10, pady=10)
+
+        tk.Button(self.root, text="Add", command=self.save_new_item).grid(row=4, column=0, columnspan=2, pady=10)
+        tk.Button(self.root, text="Back", command=self.show_main_menu).grid(row=5, column=0, columnspan=2, pady=10)
+
+    def save_new_item(self):
+        item_id = self.id_entry.get()
+        title = self.title_entry.get()
+        author = self.author_entry.get()
+        category = self.category_entry.get()
+
+        if item_id in self.data:
+            messagebox.showerror("Error", "Item ID already exists!")
+            return
+
+        if not item_id or not title or not author or not category:
+            messagebox.showerror("Error", "All fields are required!")
+            return
+
+        self.data[item_id] = {"title": title, "author": author, "category": category, "borrower": None, "due_date": None}
+        save_data(self.data)
+        messagebox.showinfo("Success", "Item added successfully!")
+        self.show_main_menu()
+
+    def checkout_item(self):
+        self.clear_frame()
+
+        tk.Label(self.root, text="Item ID:").grid(row=0, column=0, padx=10, pady=10)
+        self.id_entry = tk.Entry(self.root)
+        self.id_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        tk.Label(self.root, text="Borrower Name:").grid(row=1, column=0, padx=10, pady=10)
+        self.borrower_entry = tk.Entry(self.root)
+        self.borrower_entry.grid(row=1, column=1, padx=10, pady=10)
+
+        tk.Button(self.root, text="Check Out", command=self.process_checkout).grid(row=2, column=0, columnspan=2, pady=10)
+        tk.Button(self.root, text="Back", command=self.show_main_menu).grid(row=3, column=0, columnspan=2, pady=10)
+
+    def process_checkout(self):
+        item_id = self.id_entry.get()
+        borrower = self.borrower_entry.get()
+
+        if item_id not in self.data:
+            messagebox.showerror("Error", "Item ID not found!")
+            return
+
+        if self.data[item_id]["borrower"]:
+            messagebox.showerror("Error", "Item is already checked out!")
+            return
+
+        if not borrower:
+            messagebox.showerror("Error", "Borrower name is required!")
+            return
+
+        due_date = datetime.now() + timedelta(days=14)
+        self.data[item_id]["borrower"] = borrower
+        self.data[item_id]["due_date"] = due_date.strftime("%Y-%m-%d")
+        save_data(self.data)
+        messagebox.showinfo("Success", f"Item checked out successfully! Due date: {due_date.strftime('%Y-%m-%d')}.")
+        self.show_main_menu()
+
+    def return_item(self):
+        self.clear_frame()
+
+        tk.Label(self.root, text="Item ID:").grid(row=0, column=0, padx=10, pady=10)
+        self.id_entry = tk.Entry(self.root)
+        self.id_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        tk.Button(self.root, text="Return", command=self.process_return).grid(row=1, column=0, columnspan=2, pady=10)
+        tk.Button(self.root, text="Back", command=self.show_main_menu).grid(row=2, column=0, columnspan=2, pady=10)
+
+    def process_return(self):
+        item_id = self.id_entry.get()
+
+        if item_id not in self.data:
+            messagebox.showerror("Error", "Item ID not found!")
+            return
+
+        if not self.data[item_id]["borrower"]:
+            messagebox.showerror("Error", "Item is not checked out!")
+            return
+
+        due_date = datetime.strptime(self.data[item_id]["due_date"], "%Y-%m-%d")
+        days_overdue = (datetime.now() - due_date).days
+        fine = max(0, days_overdue * FINE_PER_DAY)
+
+        self.data[item_id]["borrower"] = None
+        self.data[item_id]["due_date"] = None
+        save_data(self.data)
+
+        if fine > 0:
+            messagebox.showinfo("Return Success", f"Item returned successfully! Overdue fine: ${fine:.2f}")
+        else:
+            messagebox.showinfo("Return Success", "Item returned successfully! No overdue fine.")
+        self.show_main_menu()
+
+    def search_items(self):
+        self.clear_frame()
+
+        tk.Label(self.root, text="Search by Title/Author/Category:").grid(row=0, column=0, padx=10, pady=10)
+        self.search_entry = tk.Entry(self.root)
+        self.search_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        tk.Button(self.root, text="Search", command=self.perform_search).grid(row=1, column=0, columnspan=2, pady=10)
+        tk.Button(self.root, text="Back", command=self.show_main_menu).grid(row=2, column=0, columnspan=2, pady=10)
+
+    def perform_search(self):
+        query = self.search_entry.get().lower()
+        results = [
+            f"ID: {item_id}, Title: {details['title']}, Author: {details['author']}, Category: {details['category']}"
+            for item_id, details in self.data.items()
+            if query in details["title"].lower() or query in details["author"].lower() or query in details["category"].lower()
+        ]
+
+        if not results:
+            messagebox.showinfo("Search Results", "No items found.")
+        else:
+            messagebox.showinfo("Search Results", "\n".join(results))
+
+    def overdue_items(self):
+        overdue_list = []
+        for item_id, details in self.data.items():
+            if details["borrower"] and datetime.now() > datetime.strptime(details["due_date"], "%Y-%m-%d"):
+                overdue_list.append(f"ID: {item_id}, Title: {details['title']}, Borrower: {details['borrower']}, Due Date: {details['due_date']}")
+
+        if not overdue_list:
+            messagebox.showinfo("Overdue Items", "No overdue items.")
+        else:
+            messagebox.showinfo("Overdue Items", "\n".join(overdue_list))
+
+# Main application
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = LibraryApp(root)
+    root.mainloop()
