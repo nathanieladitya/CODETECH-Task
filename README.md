@@ -7,49 +7,35 @@ Mentor: Neela Santhosh Kumar
 
 Overview of the Project
 
-**TASK 1: INVENTORY MANAGEMENT SYSTEM**
+TASK TWO: Library Resource Management System
+Objective
+To create a Python application for managing library resources, including books, magazines, and DVDs, with functionalities like item tracking, borrowing, and fine calculation.
 
-**Overview:**
-This project involves developing a Python-based inventory management system for a store or warehouse. The system will provide functionalities to manage products, track inventory levels, and generate insightful reports. Additionally, features like user authentication, data validation, and a user-friendly graphical user interface (GUI) will ensure accessibility and security.
+Key Features
+Resource Management:
 
-**Features:**
+Add new items (books, magazines, DVDs) with attributes like title, author, category, and availability.
+Edit or delete item details.
+Borrowing & Returning:
 
-1. **User Authentication:**
-   - Implement secure login functionality.
-   - Differentiate between user roles (e.g., Admin, Staff).
+Track who borrowed an item and its due date.
+Mark items as returned and calculate overdue fines based on a predefined rate.
+Search Functionality:
 
-2. **Product Management:**
-   - Add, edit, or delete product information.
-   - Store product details like name, SKU, category, price, and quantity.
+Search items by title, author, or category.
+Display results in a user-friendly format.
+Overdue Fine Management:
 
-3. **Inventory Tracking:**
-   - View current inventory levels.
-   - Update inventory after sales or restocking.
+Automatically calculate fines for overdue items.
+Generate reports for unpaid fines.
+Graphical User Interface (GUI):
 
-4. **Reports and Alerts:**
-   - Generate low-stock alerts based on pre-defined thresholds.
-   - Produce sales summaries (daily, weekly, monthly).
+Use Tkinter or PyQt for user interactions.
+Provide options for searching, adding, borrowing, and returning items.
+Data Storage:
 
-5. **Data Validation:**
-   - Ensure all inputs are correctly formatted and within valid ranges.
+Use a database like SQLite or a structured file (e.g., JSON) to store resource and user information.
 
-6. **Graphical User Interface (GUI):**
-   - Use a library like Tkinter or PyQt for a user-friendly interface.
-   - Allow intuitive navigation through tabs or menus.
-
-**Development Tools:**
-- Language: Python
-- Libraries: SQLite (for database), Tkinter or PyQt (for GUI), Pandas (for reports)
-
-**Implementation Steps:**
-1. Define the database schema for storing product details and transactions.
-2. Develop authentication and user role management.
-3. Create CRUD (Create, Read, Update, Delete) functionality for product management.
-4. Implement inventory level tracking logic.
-5. Design and implement the GUI.
-6. Test the system for usability and bugs.
-
-![Screenshot (116)](https://github.com/user-attachments/assets/2066fcdc-9b4e-4661-a459-a6a7625b0c33)
 
 
 
