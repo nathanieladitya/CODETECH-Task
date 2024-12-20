@@ -1,0 +1,217 @@
+import tkinter as tk
+from tkinter import messagebox, ttk
+import json
+import os
+
+# Constants
+DATA_FILE = "inventory_data.json"
+LOW_STOCK_THRESHOLD = 5
+
+# Helper functions
+def load_data():
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "r") as file:
+            return json.load(file)
+    return {}
+
+def save_data(data):
+    with open(DATA_FILE, "w") as file:
+        json.dump(data, file, indent=4)
+
+# GUI Application class
+class InventoryApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Inventory Management System")
+
+        self.data = load_data()
+
+        # Authentication
+        self.authenticated = False
+        self.show_login()
+
+    def show_login(self):
+        self.clear_frame()
+
+        tk.Label(self.root, text="Username:").grid(row=0, column=0, padx=10, pady=10)
+        self.username_entry = tk.Entry(self.root)
+        self.username_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        tk.Label(self.root, text="Password:").grid(row=1, column=0, padx=10, pady=10)
+        self.password_entry = tk.Entry(self.root, show="*")
+        self.password_entry.grid(row=1, column=1, padx=10, pady=10)
+
+        tk.Button(self.root, text="Login", command=self.authenticate).grid(row=2, column=0, columnspan=2, pady=10)
+
+    def authenticate(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+
+        # Hardcoded credentials for simplicity
+        if username == "admin" and password == "password":
+            self.authenticated = True
+            self.show_main_menu()
+        else:
+            messagebox.showerror("Error", "Invalid credentials!")
+
+    def show_main_menu(self):
+        if not self.authenticated:
+            return
+
+        self.clear_frame()
+
+        tk.Button(self.root, text="Add Product", command=self.add_product).grid(row=0, column=0, padx=10, pady=10)
+        tk.Button(self.root, text="Edit Product", command=self.edit_product).grid(row=0, column=1, padx=10, pady=10)
+        tk.Button(self.root, text="Delete Product", command=self.delete_product).grid(row=0, column=2, padx=10, pady=10)
+        tk.Button(self.root, text="Low Stock Report", command=self.low_stock_report).grid(row=1, column=0, columnspan=3, pady=10)
+
+        self.refresh_inventory_table()
+
+    def clear_frame(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
+    def refresh_inventory_table(self):
+        if hasattr(self, 'inventory_table'):
+            self.inventory_table.destroy()
+
+        self.inventory_table = ttk.Treeview(self.root, columns=("ID", "Name", "Quantity", "Price"), show="headings")
+        self.inventory_table.heading("ID", text="ID")
+        self.inventory_table.heading("Name", text="Name")
+        self.inventory_table.heading("Quantity", text="Quantity")
+        self.inventory_table.heading("Price", text="Price")
+        self.inventory_table.grid(row=2, column=0, columnspan=3, pady=10, sticky="nsew")
+
+        for product_id, details in self.data.items():
+            self.inventory_table.insert("", "end", values=(product_id, details["name"], details["quantity"], details["price"]))
+
+    def add_product(self):
+        self.clear_frame()
+
+        tk.Label(self.root, text="Product ID:").grid(row=0, column=0, padx=10, pady=10)
+        self.id_entry = tk.Entry(self.root)
+        self.id_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        tk.Label(self.root, text="Name:").grid(row=1, column=0, padx=10, pady=10)
+        self.name_entry = tk.Entry(self.root)
+        self.name_entry.grid(row=1, column=1, padx=10, pady=10)
+
+        tk.Label(self.root, text="Quantity:").grid(row=2, column=0, padx=10, pady=10)
+        self.quantity_entry = tk.Entry(self.root)
+        self.quantity_entry.grid(row=2, column=1, padx=10, pady=10)
+
+        tk.Label(self.root, text="Price:").grid(row=3, column=0, padx=10, pady=10)
+        self.price_entry = tk.Entry(self.root)
+        self.price_entry.grid(row=3, column=1, padx=10, pady=10)
+
+        tk.Button(self.root, text="Add", command=self.save_new_product).grid(row=4, column=0, columnspan=2, pady=10)
+
+        tk.Button(self.root, text="Back", command=self.show_main_menu).grid(row=5, column=0, columnspan=2, pady=10)
+
+    def save_new_product(self):
+        product_id = self.id_entry.get()
+        name = self.name_entry.get()
+        quantity = self.quantity_entry.get()
+        price = self.price_entry.get()
+
+        if product_id in self.data:
+            messagebox.showerror("Error", "Product ID already exists!")
+            return
+
+        if not product_id or not name or not quantity.isdigit() or not price.replace('.', '', 1).isdigit():
+            messagebox.showerror("Error", "Invalid input!")
+            return
+
+        self.data[product_id] = {"name": name, "quantity": int(quantity), "price": float(price)}
+        save_data(self.data)
+        messagebox.showinfo("Success", "Product added successfully!")
+        self.show_main_menu()
+
+    def edit_product(self):
+        self.clear_frame()
+
+        tk.Label(self.root, text="Enter Product ID to edit:").grid(row=0, column=0, padx=10, pady=10)
+        self.edit_id_entry = tk.Entry(self.root)
+        self.edit_id_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        tk.Button(self.root, text="Edit", command=self.load_product_for_edit).grid(row=1, column=0, columnspan=2, pady=10)
+        tk.Button(self.root, text="Back", command=self.show_main_menu).grid(row=2, column=0, columnspan=2, pady=10)
+
+    def load_product_for_edit(self):
+        product_id = self.edit_id_entry.get()
+
+        if product_id not in self.data:
+            messagebox.showerror("Error", "Product ID not found!")
+            return
+
+        self.clear_frame()
+
+        product = self.data[product_id]
+
+        tk.Label(self.root, text="Name:").grid(row=0, column=0, padx=10, pady=10)
+        self.name_entry = tk.Entry(self.root)
+        self.name_entry.insert(0, product["name"])
+        self.name_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        tk.Label(self.root, text="Quantity:").grid(row=1, column=0, padx=10, pady=10)
+        self.quantity_entry = tk.Entry(self.root)
+        self.quantity_entry.insert(0, product["quantity"])
+        self.quantity_entry.grid(row=1, column=1, padx=10, pady=10)
+
+        tk.Label(self.root, text="Price:").grid(row=2, column=0, padx=10, pady=10)
+        self.price_entry = tk.Entry(self.root)
+        self.price_entry.insert(0, product["price"])
+        self.price_entry.grid(row=2, column=1, padx=10, pady=10)
+
+        tk.Button(self.root, text="Save", command=lambda: self.save_edited_product(product_id)).grid(row=3, column=0, columnspan=2, pady=10)
+        tk.Button(self.root, text="Back", command=self.show_main_menu).grid(row=4, column=0, columnspan=2, pady=10)
+
+    def save_edited_product(self, product_id):
+        name = self.name_entry.get()
+        quantity = self.quantity_entry.get()
+        price = self.price_entry.get()
+
+        if not name or not quantity.isdigit() or not price.replace('.', '', 1).isdigit():
+            messagebox.showerror("Error", "Invalid input!")
+            return
+
+        self.data[product_id] = {"name": name, "quantity": int(quantity), "price": float(price)}
+        save_data(self.data)
+        messagebox.showinfo("Success", "Product updated successfully!")
+        self.show_main_menu()
+
+    def delete_product(self):
+        self.clear_frame()
+
+        tk.Label(self.root, text="Enter Product ID to delete:").grid(row=0, column=0, padx=10, pady=10)
+        self.delete_id_entry = tk.Entry(self.root)
+        self.delete_id_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        tk.Button(self.root, text="Delete", command=self.confirm_delete_product).grid(row=1, column=0, columnspan=2, pady=10)
+        tk.Button(self.root, text="Back", command=self.show_main_menu).grid(row=2, column=0, columnspan=2, pady=10)
+
+    def confirm_delete_product(self):
+        product_id = self.delete_id_entry.get()
+
+        if product_id not in self.data:
+            messagebox.showerror("Error", "Product ID not found!")
+            return
+
+        del self.data[product_id]
+        save_data(self.data)
+        messagebox.showinfo("Success", "Product deleted successfully!")
+        self.show_main_menu()
+
+    def low_stock_report(self):
+        low_stock_items = [f"ID: {pid}, Name: {details['name']}, Quantity: {details['quantity']}" for pid, details in self.data.items() if details['quantity'] <= LOW_STOCK_THRESHOLD]
+
+        if not low_stock_items:
+            messagebox.showinfo("Low Stock Report", "All products are sufficiently stocked.")
+        else:
+            messagebox.showinfo("Low Stock Report", "\n".join(low_stock_items))
+
+# Main application
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = InventoryApp(root)
+    root.mainloop()
